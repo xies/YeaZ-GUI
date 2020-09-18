@@ -1,4 +1,4 @@
-This is a fork of the Rahi lab's YeaZ yeast segmentation tool. I have added a script to facilitate batch CNN predictions.
+This is a fork of the Rahi lab's YeaZ yeast segmentation tool. I have added a script to facilitate batch CNN predictions. -@xies
 
 # YeaZ
 

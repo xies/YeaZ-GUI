@@ -19,7 +19,7 @@ import h5py
 # Load CNN stuff
 # Assume script is laucnhed within YeaZ-GUI
 sys.path.append('./disk')
-sys.path.append('./YeaZ-GUI/unet')
+sys.path.append('./unet')
 import Reader as nd # nd refers to nikon data for legacy reasons
 import neural_network as nn
 from segment import segment

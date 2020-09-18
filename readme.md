@@ -1,3 +1,5 @@
+This is a fork of the Rahi lab's YeaZ yeast segmentation tool. I have added a script to facilitate batch CNN predictions.
+
 # YeaZ
 
 This is the user manual for the graphical interface for segmenting yeast images using the YeaZ convolutional neural network. You can find the training set with the segmented training images here: https://www.quantsysbio.com/data-and-software/. 

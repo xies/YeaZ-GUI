@@ -20,7 +20,7 @@ Installation time is less than 5 minutes.
 
 ### Installation Steps
 
-1. Clone this repository ("git clone https://github.com/lpbsscientist/YeaZ-GUI").
+1. Clone this repository ("git clone https://github.com/xies/YeaZ-GUI").
 2. Download the parameters for the neural network:
 2.1. Download the parameters for segmenting phase contrast images from: https://drive.google.com/file/d/1UTivmx_aEMpeGdOkCZO1CS9mcdJ3zmw2. Put the file in the folder `/unet`.
 2.2. Download the parameters for segmenting bright-field images from: https://drive.google.com/file/d/16SRF-bDkxXO4nYzEPk9bxXaDjZsNcP5n. Put the file in the folder `/unet`.

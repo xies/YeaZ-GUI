@@ -734,7 +734,6 @@ class App(QMainWindow):
                                  'the link in the readme and put them into '
                                  'the folder unet')
             return
-
         thresh = self.ThresholdPred(thr_val, pred)
         seg = segment(thresh, pred, seg_val)
         self.reader.SaveMask(timeindex, fovindex, seg)

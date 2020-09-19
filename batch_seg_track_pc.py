@@ -17,26 +17,30 @@ from re import findall
 
 import h5py
 
+# Suppress warning (sklearn forces warnings)
+def warn(*args, **kwargs):
+    pass
+import warnings
+warnings.warn = warn
+
 # Load CNN stuff
-# Assume script is laucnhed within YeaZ-GUI
-sys.path.append('/Users/xies/Desktop/Code/YeaZ-GUI/disk')
+# Assume script is launched within YeaZ-GUI
+sys.path.append('/Users/xies/Desktop/Code/YeaZ-GUI/disk') # in Spyder full path is required bc pathing is weird
 sys.path.append('/Users/xies/Desktop/Code/YeaZ-GUI/unet')
 import Reader as nd # nd refers to nikon data for legacy reasons
 import neural_network as nn
 from segment import segment
 
-# Suppress warning
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
-#%%
-# Enter directory name
+#%% 
+
+# Enter directory names
 dirnames = ['/Users/xies/Desktop/test/']
 
 # Enter subfolder name(s) to iterate through
 subdirectories = ['full','pos2','pos3']
 
-# Enter the specific Channel to pick
+# Enter the specific Channel to pick (only one)
 channel = 'Phase'
 
 # Glob all filtered tifs in subfolder into dictionary
@@ -51,7 +55,24 @@ dirlist = {}
 for dirname in dirnames:
     tiflist = {}
     for subdir in subdirectories:
-        flist = sorted(glob(path.join(dirname,subdir,channel,'*.tif')))
+        print(f'Finding files in {dirname}{subdir}')
+        #NB: Windows + Linux has different glob implementation. Windows is case-insensitive, UNIX is case sensitive
+        # Test for file extension case by testing either .tif or .TIF        
+        lowerlist = sorted(glob(path.join(dirname,subdir,channel,'*.tif')))
+        upperlist = sorted(glob(path.join(dirname,subdir,channel,'*.TIF')))
+        if len(lowerlist) == 0 and len(upperlist) == 0: # No file found
+            print('No files found.')
+            break
+        if len(lowerlist) > 0 and len(upperlist) == 0: # upper case
+            flist = lowerlist
+            print(f'{len(flist)} files found with .tif extension')
+        if len(lowerlist) == 0 and len(upperlist) > 0: # upper case
+            flist = upperlist
+            print(f'{len(lowerlist)}Files found with .TIF extension')
+        if len(lowerlist) > 0 and len(upperlist) > 0: # Both are found, then likely Windowse
+            flist = lowerlist
+            print(f'{len(lowerlist)} files found with .tif or .TIF extension. Assuming Windows.')
+
         tiflist[subdir] = flist
     dirlist[dirname] = tiflist
 
@@ -59,7 +80,7 @@ for dirname in dirnames:
 #    framestr = findall('_t[0-9]+.',flist[0])[0]
 #    first_frame_in_folder[subdir] = int(framestr[2:5])
 
-#%% Segment and track indivudal tifs using neural_net predict, segment, and Reader to handle outputs
+#%% Segment and track indivudal tifs using neural_net predict, segment, and Reader to track and handle outputs
 
 # Setting thresholds manually for now
 mask_th = 0.3 # Threshold to generate initial mask
@@ -83,14 +104,17 @@ for (dirname,tiflist) in dirlist.items():
             # Read and pretreat the image
             im_raw = io.imread(f)
             im_adj = exposure.equalize_adapthist(im_raw) #Run CLAHE
-            im = im_raw.astype(np.float) # cast into float
+#            im = im_raw*1.0
+            im = im_adj.astype(np.float) # cast into float
             
+            # CNN predict
             pred = nn.prediction(im, is_pc = True)
+            print(pred.sum())
             
             # Threshold prediction to obtain mask
             threshed_mask = nn.threshold(pred, mask_th)
             # Watershed on seeds obtained from mask
-            seg = segment(threshed_mask, pred)
+            seg = segment(threshed_mask, pred, seg_distance)
             print(f'Segmented file {f}')
             # Save to h5
             reader.SaveMask(i,0, seg)

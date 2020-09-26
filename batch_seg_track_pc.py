@@ -25,8 +25,8 @@ warnings.warn = warn
 
 # Load CNN stuff
 # Assume script is launched within YeaZ-GUI
-sys.path.append('/Users/xies/Desktop/Code/YeaZ-GUI/disk') # in Spyder full path is required bc pathing is weird
-sys.path.append('/Users/xies/Desktop/Code/YeaZ-GUI/unet')
+sys.path.append(path.join('.','disk')) # in Spyder full path is required bc pathing is weird
+sys.path.append(path.join('.','unet'))
 import Reader as nd # nd refers to nikon data for legacy reasons
 import neural_network as nn
 from segment import segment
